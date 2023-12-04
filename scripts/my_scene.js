@@ -8,6 +8,7 @@ class MyScene extends Phaser.Scene {
         this.load.image('background', 'assets/background.png');
         this.load.image('taro', 'assets/taro.png');
         this.load.image('jiro', 'assets/jiro.png');
+        this.load.image('hanako', 'assets/hanako.png');
     }
 
     create() {
@@ -36,6 +37,8 @@ class MyScene extends Phaser.Scene {
             this.player2.x = D_WIDTH / 2;
             this.player2.y = D_HEIGHT / 2;
         }
+
+        this.add.image(D_WIDTH / 2, D_HEIGHT / 2, 'hanako');
     }
 
     update(time, delta) {

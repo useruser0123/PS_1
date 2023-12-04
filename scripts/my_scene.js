@@ -110,6 +110,7 @@ class MyScene extends Phaser.Scene {
     handleCollision(player, hanakoGroup) {
         this.displayText(100, 150, '痛い！');
         hanakoGroup.destroy();
+        this.physics.pause();
     }
 
     // hanakoオブジェクトを生成する関数

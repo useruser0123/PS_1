@@ -1,5 +1,4 @@
 class MyScene extends Phaser.Scene {
-
     constructor() {
         super({ key: 'MyScene1', active: true });
     }
@@ -19,42 +18,27 @@ class MyScene extends Phaser.Scene {
         this.player.angle = 0;
         this.player_direction = 1;
 
-        // jiroの初期設定
-        this.player2 = this.physics.add.sprite(500, 300, 'jiro');
-        this.player2.direction = 1;
+        // hanakoグループの初期設定
+        this.hanakoGroup = this.physics.add.group();
 
         // 新しく追加した部分
         this.add.text(600, 400, 'MyWorld');
 
-        // 画面外に出た場合の処理（taro）
-        if (this.player.x < 0 || this.player.x > D_WIDTH || this.player.y < 0 || this.player.y > D_HEIGHT) {
-            this.player.x = D_WIDTH / 2;
-            this.player.y = D_HEIGHT / 2;
-        }
+        // タイマーの設定
+        this.time.addEvent({
+            delay: 3000,
+            callback: this.generateHanako,
+            callbackScope: this,
+            loop: false
+        });
 
-        // 画面外に出た場合の処理（jiro）
-        if (this.player2.x < 0 || this.player2.x > D_WIDTH || this.player2.y < 0 || this.player2.y > D_HEIGHT) {
-            this.player2.x = D_WIDTH / 2;
-            this.player2.y = D_HEIGHT / 2;
-        }
-        // w キーの入力を処理する
-        this.image_x = Phaser.Math.Between(100, 400);
-        this.hanako = this.add.image(this.image_x, 100, 'hanako');
-
-        this.input.keyboard.on('keydown-W', function (event) {
-            this.hanako.destroy();
-            this.image_x = Phaser.Math.Between(100, 400);
-            this.hanako = this.add.image(this.image_x, 100, 'hanako');
-        }, this);
+        // 衝突時のイベントを追加
+        this.physics.add.collider(this.player, this.hanakoGroup, this.handleCollision, null, this);
     }
 
     update(time, delta) {
-        // 演習 1-4の部分（キーボード操作）をコメントアウト
-        // ...
-
         // キーボードの入力を処理する
         this.handleTaroKeyboardInput();
-        this.handleJiroKeyboardInput();
         this.handleTextDisplayInput();
     }
 
@@ -68,25 +52,18 @@ class MyScene extends Phaser.Scene {
         else if (this.input.keyboard.addKey('LEFT').isDown) {
             this.player.setVelocityX(-50);
         }
+        // キーボードの上矢印キーを押すと taro が上に 50 動く
+        else if (this.input.keyboard.addKey('UP').isDown) {
+            this.player.setVelocityY(-50);
+        }
+        // キーボードの下矢印キーを押すと taro が下に 50 動く
+        else if (this.input.keyboard.addKey('DOWN').isDown) {
+            this.player.setVelocityY(50);
+        }
         // キーが押されていない場合、速度をリセット
         else {
             this.player.setVelocityX(0);
-        }
-    }
-
-    // jiro用のキーボード入力を処理する関数
-    handleJiroKeyboardInput() {
-        // キーボードの右矢印キーを押すと jiro が左に 50 動く
-        if (this.input.keyboard.addKey('RIGHT').isDown) {
-            this.player2.setVelocityX(-50);
-        }
-        // キーボードの左矢印キーを押すと jiro が右に 50 動く
-        else if (this.input.keyboard.addKey('LEFT').isDown) {
-            this.player2.setVelocityX(50);
-        }
-        // キーが押されていない場合、速度をリセット
-        else {
-            this.player2.setVelocityX(0);
+            this.player.setVelocityY(0);
         }
     }
 
@@ -109,7 +86,7 @@ class MyScene extends Phaser.Scene {
 
     displayText(x, y, text) {
         this.clearText();
-        this.add.text(x, y, text);
+        this.add.text(x, y, text, { fontFamily: 'Meiryo' });
     }
 
     clearText() {
@@ -117,5 +94,27 @@ class MyScene extends Phaser.Scene {
         if (textObject instanceof Phaser.GameObjects.Text) {
             textObject.destroy();
         }
+    }
+
+    // hanakoオブジェクトをランダムな座標に移動する関数
+    moveHanakoRandomly() {
+        // hanakoが1体しかない場合のみ移動
+        if (this.hanakoGroup.children.size === 1) {
+            const hanako = this.hanakoGroup.getFirst(true);
+            hanako.x = Phaser.Math.Between(200, 400);
+            hanako.y = Phaser.Math.Between(100, 200);
+        }
+    }
+
+    // 衝突時の処理
+    handleCollision() {
+        this.displayText(100, 150, '痛い！');
+    }
+
+    // hanakoオブジェクトを生成する関数
+    generateHanako() {
+        let randX = Phaser.Math.Between(200, 400);
+        let randY = Phaser.Math.Between(100, 200);
+        this.hanakoGroup.create(randX, randY, 'hanako');
     }
 }

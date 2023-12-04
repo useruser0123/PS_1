@@ -13,7 +13,7 @@ class MyScene extends Phaser.Scene {
 
     create() {
         this.add.image(D_WIDTH / 2, D_HEIGHT / 2, 'background');
-        
+
         // taroの初期設定
         this.player = this.physics.add.sprite(500, 350, 'taro');
         this.player.angle = 0;
@@ -37,14 +37,21 @@ class MyScene extends Phaser.Scene {
             this.player2.x = D_WIDTH / 2;
             this.player2.y = D_HEIGHT / 2;
         }
+        // w キーの入力を処理する
+        this.image_x = Phaser.Math.Between(100, 400);
+        this.hanako = this.add.image(this.image_x, 100, 'hanako');
 
-        this.add.image(D_WIDTH / 2, D_HEIGHT / 2, 'hanako');
+        this.input.keyboard.on('keydown-W', function (event) {
+            this.hanako.destroy();
+            this.image_x = Phaser.Math.Between(100, 400);
+            this.hanako = this.add.image(this.image_x, 100, 'hanako');
+        }, this);
     }
 
     update(time, delta) {
         // 演習 1-4の部分（キーボード操作）をコメントアウト
         // ...
-        
+
         // キーボードの入力を処理する
         this.handleTaroKeyboardInput();
         this.handleJiroKeyboardInput();
@@ -82,6 +89,7 @@ class MyScene extends Phaser.Scene {
             this.player2.setVelocityX(0);
         }
     }
+
     handleTextDisplayInput() {
         // キーボードの a キーを押すと座標 (100, 50)に文字列 "Hello!" と表示
         if (this.input.keyboard.addKey('A').isDown) {
@@ -98,10 +106,12 @@ class MyScene extends Phaser.Scene {
             this.clearText();
         }
     }
+
     displayText(x, y, text) {
         this.clearText();
         this.add.text(x, y, text);
     }
+
     clearText() {
         const textObject = this.children.getAt(this.children.length - 1);
         if (textObject instanceof Phaser.GameObjects.Text) {

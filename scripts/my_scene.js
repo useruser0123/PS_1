@@ -11,7 +11,7 @@ class MyScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(D_WIDTH / 2, D_HEIGHT / 2, 'background');
+        this.add.image(400, 250, 'background');
 
         // taroの初期設定
         this.player = this.physics.add.sprite(500, 350, 'taro');
@@ -107,8 +107,9 @@ class MyScene extends Phaser.Scene {
     }
 
     // 衝突時の処理
-    handleCollision() {
+    handleCollision(player, hanakoGroup) {
         this.displayText(100, 150, '痛い！');
+        hanakoGroup.destroy();
     }
 
     // hanakoオブジェクトを生成する関数

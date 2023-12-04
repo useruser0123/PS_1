@@ -1,47 +1,70 @@
+class MyScene extends Phaser.Scene {
 
-// MyScene1クラス
-// 他のJSファイルから呼び出された場合はシーンを返す
-class MyScene extends Phaser.Scene{
+  constructor() {
+      super({ key: 'MyScene1', active: true });
+  }
 
-    // シーンの事前読み込み処理
-    preload() {
-         // 画像の読み込み(使用する時の名前, パス)
-        this.load.image('background', 'assets/background.png');
-        this.load.image('taro', 'assets/taro.png');
-    }
+  preload() {
+      this.load.image('background', 'assets/background.png');
+      this.load.image('taro', 'assets/taro.png');
+      this.load.image('jiro', 'assets/jiro.png');
+  }
 
-    // シーン初期化処理
-    create() {
-         // 単体画像をシーンに追加(X座標,Y座標,画像名)
-        this.add.image(D_WIDTH/2, D_HEIGHT/2, 'background');
-        const player = this.physics.add.sprite(500, 350, 'taro');
-        this.player = player
-        this.player.angle = 0;
-    }
-    
-  // 毎フレーム実行される繰り返し処理
-    update(time, delta) {
-        // プレイヤーの向きフラグを変更
-        if (this.player.x >= D_WIDTH - 100) this.player_direction = -1;
-        if (this.player.x <= 450) this.player_direction = 1;
-        // プレイヤーの移動
-        // +X方向の移動フラグならプレイヤーを右に移動
-        if (this.player_direction == 1) {
-            this.player.setVelocityX(100);
-            this.player.setVelocityY(-100);
-        // -X方向の移動フラグならプレイヤーを左に移動
-        } else {
-          this.player.setVelocityX(-100);
-          this.player.setVelocityY(100);
-        }
-       // if (this.player.y >= D_WIDTH - 400) this.player_direction3 = -1;
-       // if (this.player.y <= 30) this.player_direction3 = 1;
-       // if (this.player.x >= D_WIDTH - 100) this.player_direction3 = -1;
-       // if (this.player.x <= 0) this.player_direction3 = 1;
-       // // プレイヤーの移動
-       //     this.player.y -= 5;// 横方向へ移動を設定
-       //     this.player.x += 5;// 横方向へ移動を設定
-       // this.player.angle += 5;
-       // this.player.setAngle( this.player.angle );
+  create() {
+      this.add.image(D_WIDTH / 2, D_HEIGHT / 2, 'background');
+      
+      // taroの初期設定
+      this.player = this.physics.add.sprite(500, 350, 'taro');
+      this.player.angle = 0;
+      this.player_direction = 1;
+
+      // jiroの初期設定
+      this.player2 = this.physics.add.sprite(500, 300, 'jiro');
+      this.player2.direction = 1;
+  }
+
+  update(time, delta) {
+      // 演習 1-4の部分（キーボード操作）をコメントアウト
+      // ...
+
+      // キーボードの入力を処理する
+      this.handleKeyboardInput();
+
+      // 画面外に出た場合の処理（taro）
+      if (this.player.x < 0 || this.player.x > D_WIDTH || this.player.y < 0 || this.player.y > D_HEIGHT) {
+          this.player.x = D_WIDTH / 2;
+          this.player.y = D_HEIGHT / 2;
+      }
+
+      // 画面外に出た場合の処理（jiro）
+      if (this.player2.x < 0 || this.player2.x > D_WIDTH || this.player2.y < 0 || this.player2.y > D_HEIGHT) {
+          this.player2.x = D_WIDTH / 2;
+          this.player2.y = D_HEIGHT / 2;
+      }
+  }
+
+  // キーボードの入力を処理する関数
+  handleKeyboardInput() {
+      // キーボードの右矢印キーを押すと taro が右に 50 動く
+      if (this.input.keyboard.addKey('RIGHT').isDown) {
+          this.player.setVelocityX(50);
+      }
+      // キーボードの左矢印キーを押すと taro が左に 50 動く
+      else if (this.input.keyboard.addKey('LEFT').isDown) {
+          this.player.setVelocityX(-50);
+      }
+      // キーボードの右矢印キーを押すと jiro が左に 50 動く
+      if (this.input.keyboard.addKey('RIGHT').isDown) {
+          this.player2.setVelocityX(-50);
+      }
+      // キーボードの左矢印キーを押すと jiro が右に 50 動く
+      else if (this.input.keyboard.addKey('LEFT').isDown) {
+          this.player2.setVelocityX(50);
+      }
+      // キーが押されていない場合、速度をリセット
+      else {
+          this.player.setVelocityX(0);
+          this.player2.setVelocityX(0);
+      }
   }
 }
